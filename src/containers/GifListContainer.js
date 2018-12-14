@@ -5,10 +5,12 @@ import GifSearch from '../components/GifSearch';
 class GifListContainer extends Component {
 
   state={
-    gifs: []
+    gifs: [],
+    term: ''
   }
 
   componentDidMount() {
+    console.log("COMPONENT DID MOUNT");
     fetch('http://api.giphy.com/v1/gifs/search?q=YOUR QUERY HERE&api_key=dc6zaTOxFJmzC&rating=g')
     .then(res => res.json())
     .then(gif => {
@@ -18,16 +20,23 @@ class GifListContainer extends Component {
     })
   }
 
-  searchAll = ()=>{
-    console.log("searchAll in Gif List Container")
+  searchAll = (e, term)=>{
+    e.preventDefault()
+    fetch(`http://api.giphy.com/v1/gifs/search?q=${term}&api_key=dc6zaTOxFJmzC&rating=g`)
+    .then(res => res.json())
+    .then(gif => {
+      this.setState({
+        gifs:[gif.data[0].images.original.url,gif.data[1].images.original.url,gif.data[2].images.original.url]
+      })
+    })
   }
 
   render() {
-
+    console.log('state', this.state);
     return (
       <div>
+        <GifSearch searchAll={this.searchAll}/>
         <GifList allGifs={this.state.gifs}/>
-        <GifSearch searchGif={this.searchAll}/>
       </div>
     );
   }
